@@ -1,4 +1,8 @@
-function [ xM, yM, zM ] = graphicBuilder(symbolicaFunction, parameters, initial, lowerBorder, upperBorder )     
+function [ xM, yM, zM ] = graphicBuilder(symbolicaFunction, parameters, initial, lowerBorder, upperBorder, isGraphic )     
+    xM = [];
+    yM = [];
+    zM = [];
+
     quantity = max(size(parameters));
     
     % define symbolic variable  
@@ -19,9 +23,9 @@ function [ xM, yM, zM ] = graphicBuilder(symbolicaFunction, parameters, initial,
         xM = minRange : stepSize : maxRange;
         yM = targetFunction1(xM);    
         zM = [];
-    elseif isequal(quantity, 2)         
+    elseif isequal(quantity, 2)    
         [xM, yM] = meshgrid(minRange:stepSize:maxRange, minRange:stepSize:maxRange);
-        zM       = targetFunction2(xM, yM);         
-    end
+        zM       = targetFunction2(xM, yM);           
+    end  
 end
 

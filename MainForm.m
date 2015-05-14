@@ -121,6 +121,53 @@ function hookeJeevesButton_Callback(hObject, eventdata, handles)
     hold off;    
 end
 
+
+function hyperSquareButton_Callback(hObject, eventdata, handles)
+    global NAMES% --- GLOBAL DEFINE   
+    global PARAMETERS% --- GLOBAL DEFINE   
+    global FUNCTION_EXPRESSION% --- GLOBAL DEFINE   
+    
+     % define symbolic variable  
+    for i = 1 : max(size(NAMES))                 
+        eval(sprintf('syms %s', NAMES{i}));
+        eval(sprintf('%s = %d;', NAMES{i}, PARAMETERS(i, 1))); 
+    end       
+    targetFunction = @(p) double( subs(FUNCTION_EXPRESSION, NAMES, p) )
+    
+    ox = PARAMETERS(1, 1);
+    oy = PARAMETERS(2, 1);
+    squareSize = str2double(get(handles.hyperSquareStepSizeEdit, 'String'));
+    maxIterations = str2double(get(handles.hyperSquareMaximumStepEdit, 'String'));
+    quantityPoints = str2double(get(handles.edit19hyperSquareQuantityPointsPerSquareEdit, 'String'));
+        
+    [squares, points, values] = hypersquare(PARAMETERS(:, 1), squareSize, maxIterations, maxIterations, targetFunction);    
+   
+    hold on;
+    ps = zeros(3, maxIterations);
+    for i = 1 : maxIterations
+      for j = 1 : 5
+          ps(1, j) = squares(i, 3 * (j - 1) + 1);
+          ps(2, j) = squares(i, 3 * (j - 1) + 2);
+          ps(3, j) = squares(i, 3 * (j - 1) + 3);
+      end      
+      
+      plot3(handles.mainAxes, ps(1, :), ps(2, :), ps(3, :),...
+                    '--rs','LineWidth',1,...
+                    'MarkerEdgeColor','r',...
+                    'MarkerFaceColor','r',...
+                    'MarkerSize',1)       
+        plot3(handles.mainAxes, points(i, 1), points(i, 2), values(i),...
+                    '--rs','LineWidth',5,...
+                    'MarkerEdgeColor','g',...
+                    'MarkerFaceColor','g',...
+                    'MarkerSize',5)
+    end
+    hold off;
+        
+        
+    
+end
+
 function setButton_Callback(hObject, eventdata, handles)
     global NAMES% --- GLOBAL DEFINE   
     
@@ -167,12 +214,20 @@ function buildGrapgicButton_Callback(hObject, eventdata, handles)
     quantity = max(size(NAMES));
     if isequal(quantity, 1)
         rotate3d off;
-        [xV, yV, ~] = graphicBuilder(FUNCTION_EXPRESSION, NAMES, PARAMETERS(:, 1), PARAMETERS(:, 2), PARAMETERS(:, 3));
+        [xV, yV, ~] = graphicBuilder(FUNCTION_EXPRESSION, NAMES, PARAMETERS(:, 1), PARAMETERS(:, 2), PARAMETERS(:, 3), false);
         plot(handles.mainAxes, xV, yV);
-    elseif isequal(quantity, 2)
-        rotate3d on;
-        [xM, yM, zM] = graphicBuilder(FUNCTION_EXPRESSION, NAMES, PARAMETERS(:, 1), PARAMETERS(:, 2), PARAMETERS(:, 3));
-        mesh(handles.mainAxes, xM, yM, zM); 
+    elseif isequal(quantity, 2)            
+        selectedType = get(get(handles.viewTypePanel, 'SelectedObject'),'Tag'); 
+        isGraphic = isequal(selectedType, 'graphicRadioButton');        
+        [xM, yM, zM] = graphicBuilder(FUNCTION_EXPRESSION, NAMES, PARAMETERS(:, 1), PARAMETERS(:, 2), PARAMETERS(:, 3), isGraphic);
+        if isGraphic           
+            rotate3d on;     
+            mesh(handles.mainAxes, xM, yM, zM); 
+        else
+            rotate3d off;
+            [C, h] = contour(xM, yM, zM);
+            clabel(C, h);
+        end
     end           
 end
 
