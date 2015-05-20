@@ -21,9 +21,9 @@ function [X,BestF,Iters, path, values] = hookejeeves(N, X, StepSize, MinStepSize
     while bGoOn
         disp('Global loop');
         Iters = Iters + 1;
-        if Iters > MaxIter
-            break;
-        end      
+%         if Iters > MaxIter
+%             break;
+%         end      
         
         if and((Iters > 2), (isequal(X, Xnew)))
             break

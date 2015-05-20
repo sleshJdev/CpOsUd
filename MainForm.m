@@ -141,11 +141,20 @@ function hyperSquareCalculator(handles, isImprovedHyperSquareMethod)
     if isImprovedHyperSquareMethod
         color = 'y';
         scaleFactor = str2double(get(handles.improvedScaleFactorEdit, 'String'));
-        [squares, points, values] = improvedHypersquare(PARAMETERS(:, 1), squareSize, maxIterations, quantityPoints, scaleFactor, targetFunction);
+        precession = str2double(get(handles.improvedPrecessionEdit, 'String'));
+        [squares, points, values, iterations] = improvedHypersquare(PARAMETERS(:, 1), squareSize, maxIterations, quantityPoints, scaleFactor, precession, targetFunction);
+        maxIterations = iterations;
     else
        [squares, points, values] = hypersquare(PARAMETERS(:, 1), squareSize, maxIterations, quantityPoints, targetFunction);     
     end  
    
+    [bestValue, index] = min(values);
+    bestPoint = points(index, :);
+    
+    set(handles.xMinEdit, 'String', bestPoint(1));
+    set(handles.yMinEdit, 'String', bestPoint(2));
+    set(handles.zMinEdit, 'String', bestValue); 
+    
     hold on;
     ps = zeros(3, maxIterations);
     for i = 1 : maxIterations
@@ -156,10 +165,10 @@ function hyperSquareCalculator(handles, isImprovedHyperSquareMethod)
       end          
       
       plot3(handles.mainAxes, ps(1, :), ps(2, :), ps(3, :),...
-                    color,'LineWidth',1,...
+                    color,'LineWidth',2,...
                     'MarkerEdgeColor',color,...
                     'MarkerFaceColor',color,...
-                    'MarkerSize',1)       
+                    'MarkerSize',2)       
         plot3(handles.mainAxes, points(i, 1), points(i, 2), values(i),...
                     '--rs','LineWidth',2,...
                     'MarkerEdgeColor','g',...
