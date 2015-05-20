@@ -3,3 +3,4 @@
 ###Methods:
 1. Bisection
 2. Hooke-Jeeves search method
+3. Hyper square
