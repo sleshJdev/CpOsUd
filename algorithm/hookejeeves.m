@@ -11,13 +11,13 @@ function [X,BestF,Iters, path, values] = hookejeeves(N, X, StepSize, MinStepSize
     Xnew = X;
     BestF = feval(myFx, Xnew);
     LastBestF = 100 * BestF + 100;
-
+    
     bGoOn = true;
     Iters = 0;
-
+    
     values = [];
     path = [];
-       
+    
     while bGoOn
         disp('Global loop');
         Iters = Iters + 1;
@@ -31,7 +31,7 @@ function [X,BestF,Iters, path, values] = hookejeeves(N, X, StepSize, MinStepSize
         
         X = Xnew;
         
-        for i=1:N           
+        for i=1 : N           
             bMoved(i) = 0;
             bGoOn2 = true;
             while bGoOn2        

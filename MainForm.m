@@ -121,8 +121,7 @@ function hookeJeevesButton_Callback(hObject, eventdata, handles)
     hold off;    
 end
 
-
-function hyperSquareButton_Callback(hObject, eventdata, handles)
+function hyperSquareCalculator(handles, isImprovedHyperSquareMethod)
     global NAMES% --- GLOBAL DEFINE   
     global PARAMETERS% --- GLOBAL DEFINE   
     global FUNCTION_EXPRESSION% --- GLOBAL DEFINE   
@@ -134,13 +133,18 @@ function hyperSquareButton_Callback(hObject, eventdata, handles)
     end       
     targetFunction = @(p) double( subs(FUNCTION_EXPRESSION, NAMES, p) )
     
-    ox = PARAMETERS(1, 1);
-    oy = PARAMETERS(2, 1);
     squareSize = str2double(get(handles.hyperSquareStepSizeEdit, 'String'));
     maxIterations = str2double(get(handles.hyperSquareMaximumStepEdit, 'String'));
-    quantityPoints = str2double(get(handles.edit19hyperSquareQuantityPointsPerSquareEdit, 'String'));
-        
-    [squares, points, values] = hypersquare(PARAMETERS(:, 1), squareSize, maxIterations, maxIterations, targetFunction);    
+    quantityPoints = str2double(get(handles.hyperSquareQuantityPointsPerSquareEdit, 'String'));
+    
+    color = 'r';
+    if isImprovedHyperSquareMethod
+        color = 'y';
+        scaleFactor = str2double(get(handles.improvedScaleFactorEdit, 'String'));
+        [squares, points, values] = improvedHypersquare(PARAMETERS(:, 1), squareSize, maxIterations, quantityPoints, scaleFactor, targetFunction);
+    else
+       [squares, points, values] = hypersquare(PARAMETERS(:, 1), squareSize, maxIterations, quantityPoints, targetFunction);     
+    end  
    
     hold on;
     ps = zeros(3, maxIterations);
@@ -149,23 +153,28 @@ function hyperSquareButton_Callback(hObject, eventdata, handles)
           ps(1, j) = squares(i, 3 * (j - 1) + 1);
           ps(2, j) = squares(i, 3 * (j - 1) + 2);
           ps(3, j) = squares(i, 3 * (j - 1) + 3);
-      end      
+      end          
       
       plot3(handles.mainAxes, ps(1, :), ps(2, :), ps(3, :),...
-                    '--rs','LineWidth',1,...
-                    'MarkerEdgeColor','r',...
-                    'MarkerFaceColor','r',...
+                    color,'LineWidth',1,...
+                    'MarkerEdgeColor',color,...
+                    'MarkerFaceColor',color,...
                     'MarkerSize',1)       
         plot3(handles.mainAxes, points(i, 1), points(i, 2), values(i),...
-                    '--rs','LineWidth',5,...
+                    '--rs','LineWidth',2,...
                     'MarkerEdgeColor','g',...
                     'MarkerFaceColor','g',...
-                    'MarkerSize',5)
+                    'MarkerSize',2)
     end
-    hold off;
-        
-        
-    
+    hold off;  
+end
+
+function hyperSquareButton_Callback(hObject, eventdata, handles)
+     hyperSquareCalculator(handles, false);
+end
+
+function improvedHyperSquareButton_Callback(hObject, eventdata, handles)
+    hyperSquareCalculator(handles, true);
 end
 
 function setButton_Callback(hObject, eventdata, handles)
@@ -219,7 +228,7 @@ function buildGrapgicButton_Callback(hObject, eventdata, handles)
     elseif isequal(quantity, 2)            
         selectedType = get(get(handles.viewTypePanel, 'SelectedObject'),'Tag'); 
         isGraphic = isequal(selectedType, 'graphicRadioButton');        
-        [xM, yM, zM] = graphicBuilder(FUNCTION_EXPRESSION, NAMES, PARAMETERS(:, 1), PARAMETERS(:, 2), PARAMETERS(:, 3), isGraphic);
+        [xM, yM, zM] = graphicBuilder(FUNCTION_EXPRESSION, NAMES, PARAMETERS(:, 1), PARAMETERS(:, 2), PARAMETERS(:, 3));
         if isGraphic           
             rotate3d on;     
             mesh(handles.mainAxes, xM, yM, zM); 
@@ -237,8 +246,8 @@ function defineParameters(handles)
     global FUNCTION_EXPRESSION% --- GLOBAL DEFINE
     
     % default
-    minDefault = -1;
-    maxDefault = 3;
+    minDefault = -5;
+    maxDefault = 5;
     initialDefault = 2;
     
     FUNCTION_EXPRESSION = get(handles.expressionFunctionEdit, 'String'); 

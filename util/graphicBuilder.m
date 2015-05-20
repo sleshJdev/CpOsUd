@@ -1,4 +1,4 @@
-function [ xM, yM, zM ] = graphicBuilder(symbolicaFunction, parameters, initial, lowerBorder, upperBorder, isGraphic )     
+function [ xM, yM, zM ] = graphicBuilder(symbolicaFunction, parameters, initial, lowerBorder, upperBorder )     
     xM = [];
     yM = [];
     zM = [];
@@ -13,7 +13,6 @@ function [ xM, yM, zM ] = graphicBuilder(symbolicaFunction, parameters, initial,
    
     targetFunction1 = @(x) double( subs(symbolicaFunction, parameters, x) );
     targetFunction2 = @(x, y) double( subs(symbolicaFunction, parameters, {x, y}) );    
-%     disp(targetFunction(initial));
         
     quantitySteps = 50;
     maxRange = max(upperBorder);
