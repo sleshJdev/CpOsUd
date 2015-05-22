@@ -114,6 +114,9 @@ function applyButton_Callback(hObject, eventdata, handles)
             G.values(i, j) = f(p);
         end
     end   
+    rowNames = cell(h, 1);
+    for i = 1 : h, rowNames{i} = sprintf('P%d', i); end;         
+    set(handles.pointsTable, 'RowName', rowNames);
     set(handles.pointsTable, 'ColumnName', [G.names, functionNames]);
     set(handles.pointsTable, 'Data', [G.points, G.values]);  
     
@@ -287,7 +290,11 @@ function additiveButton_Callback(hObject, eventdata, handles)
     result = cell(number, w) ;    
     resultRowNames = cell(number, 1);
     for i = 1 : number
-        [~, index] = max(sumValues);
+        if isequal(char(G.globalOptimizationType), 'max')
+            [~, index] = max(sumValues);
+        else
+            [~, index] = min(sumValues);
+        end
         result(i, :) = data(index, :);
         resultRowNames(i) = rowNames(index);
         sumValues(index) = [];
