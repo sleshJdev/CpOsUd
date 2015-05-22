@@ -40,7 +40,7 @@ function [ squares, bestPointInSquare, bestValuesInSquare, i ] ...
         fprintf('\t best point: %s. best value %s\n', mat2str(bestPoint), bestValue);
         
         if i > 1
-            if bestValuesInSquare(i) - bestValuesInSquare(i - 1) < precession
+            if (abs(bestValuesInSquare(i) - bestValuesInSquare(i - 1))) < precession
                 fprintf('\tbreak by precession condition\n');
                 break;
             end        
@@ -54,6 +54,7 @@ function [ squares, bestPointInSquare, bestValuesInSquare, i ] ...
         else factor = xshift / yshift; end      
         
         if factor > scaleFactor, factor = scaleFactor; end
+        if factor < 1, factor = 1; end
         if factor == 0, factor = 1; end
         
         dy = dy / factor;   

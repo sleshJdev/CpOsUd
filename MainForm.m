@@ -29,14 +29,13 @@ function MainForm_OpeningFcn(hObject, eventdata, handles, varargin)
     addpath ./algorithm/
     addpath ./util/
     addpath ./trash/
+    addpath ./multicriteriality/
+    addpath ./multicriteriality/lib/
 end
 
 function varargout = MainForm_OutputFcn(hObject, eventdata, handles)
     varargout{1} = handles.output;
-
 end
-
-
 
 % --------------------------- listeners --------------------------- %
 function bisectionButton_Callback(hObject, eventdata, handles)   
@@ -73,7 +72,7 @@ function hookeJeevesButton_Callback(hObject, eventdata, handles)
     global PARAMETERS% --- GLOBAL DEFINE   
     global FUNCTION_EXPRESSION% --- GLOBAL DEFINE   
     
-     % define symbolic variable  
+    % define symbolic variable  
     for i = 1 : max(size(NAMES))                 
         eval(sprintf('syms %s', NAMES{i}));
         eval(sprintf('%s = %d;', NAMES{i}, PARAMETERS(i, 1))); 
@@ -164,7 +163,7 @@ function hyperSquareCalculator(handles, isImprovedHyperSquareMethod)
           ps(3, j) = squares(i, 3 * (j - 1) + 3);
       end          
       
-      plot3(handles.mainAxes, ps(1, :), ps(2, :), ps(3, :),...
+        plot3(handles.mainAxes, ps(1, :), ps(2, :), ps(3, :),...
                     color,'LineWidth',2,...
                     'MarkerEdgeColor',color,...
                     'MarkerFaceColor',color,...
@@ -175,6 +174,11 @@ function hyperSquareCalculator(handles, isImprovedHyperSquareMethod)
                     'MarkerFaceColor','g',...
                     'MarkerSize',2)
     end
+    plot3(handles.mainAxes, bestPoint(1), bestPoint(2), bestValue,...
+                    '--rs','LineWidth',3,...
+                    'MarkerEdgeColor','r',...
+                    'MarkerFaceColor','r',...
+                    'MarkerSize',3)
     hold off;  
 end
 
@@ -184,6 +188,10 @@ end
 
 function improvedHyperSquareButton_Callback(hObject, eventdata, handles)
     hyperSquareCalculator(handles, true);
+end
+
+function windowMenu_Callback(hObject, eventdata, handles)
+    MulticriterialityForm();
 end
 
 function setButton_Callback(hObject, eventdata, handles)
@@ -243,7 +251,7 @@ function buildGrapgicButton_Callback(hObject, eventdata, handles)
             mesh(handles.mainAxes, xM, yM, zM); 
         else
             rotate3d off;
-            [C, h] = contour(xM, yM, zM);
+            [C, h] = contour(xM, yM, zM, [1, 10, 100, 1000]);
             clabel(C, h);
         end
     end           
@@ -332,7 +340,7 @@ end
 
 function setParameters(index, initial, min, max)
     global PARAMETERS% --- GLOBAL DEFINE   
-
+    
     if ischar(initial),
         PARAMETERS(index, 1) = str2double(initial);
     else
