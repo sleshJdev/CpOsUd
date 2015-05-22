@@ -240,7 +240,7 @@ function buildGrapgicButton_Callback(hObject, eventdata, handles)
     quantity = max(size(NAMES));
     if isequal(quantity, 1)
         rotate3d off;
-        [xV, yV, ~] = graphicBuilder(FUNCTION_EXPRESSION, NAMES, PARAMETERS(:, 1), PARAMETERS(:, 2), PARAMETERS(:, 3), false);
+        [xV, yV, ~] = graphicBuilder(FUNCTION_EXPRESSION, NAMES, PARAMETERS(:, 1), PARAMETERS(:, 2), PARAMETERS(:, 3));
         plot(handles.mainAxes, xV, yV);
     elseif isequal(quantity, 2)            
         selectedType = get(get(handles.viewTypePanel, 'SelectedObject'),'Tag'); 

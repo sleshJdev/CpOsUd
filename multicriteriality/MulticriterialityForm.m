@@ -49,7 +49,6 @@ function MulticriterialityForm_OpeningFcn(hObject, eventdata, handles, varargin)
     handles.output = hObject;
     
     clc;
-    addpath ./lib/
     
     global G
     G = Properties();
